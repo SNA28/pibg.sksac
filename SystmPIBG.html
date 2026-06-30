@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard e-PIBG SK St. Anne's Convent</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts: Fredoka untuk gaya bulat, kemas & mudah dibaca -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #f1f5f9;
+            font-size: 16px; /* Saiz standard seimbang */
+        }
+
+        .gradient-navy {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Skrol bar tersuai */
+        ::-webkit-scrollbar { width: 10px; height: 12px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="antialiased text-slate-800 pb-20">
+
+    <!-- PENGEPALA PREMIUM (HEADER) -->
+    <header class="gradient-navy text-white shadow-2xl sticky top-0 z-50">
+        <div class="max-w-[1600px] mx-auto px-8 py-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-yellow-400 uppercase">
+                        Pengurusan Kewangan PIBG
+                    </h1>
+                    <p class="text-lg md:text-xl font-medium text-blue-200 uppercase tracking-widest mt-1">
+                        SK St. Anne's Convent <span class="ml-2 bg-emerald-500/20 text-emerald-400 text-xs font-extrabold px-2.5 py-1 rounded-full uppercase tracking-normal border border-emerald-400/30"><i class="fa-solid fa-cloud mr-1"></i> Awan Aktif (Live)</span>
+                    </p>
+                </div>
+                
+                <div class="flex items-center gap-4 shrink-0">
+                    <button id="btnToggleMode" onclick="bukaModalLaluan()" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold text-base px-8 py-3 rounded-2xl transition-all shadow-xl flex items-center gap-2 cursor-pointer border border-yellow-300">
+                        <i class="fa-solid fa-lock text-base"></i> MOD ADMIN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-[1600px] mx-auto px-8 mt-10 space-y-10">
+
+        <!-- ================= SECTION 1: KEDUDUKAN BANK & DANA ================= -->
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            
+            <!-- KAD BANK UTAMA -->
+            <div class="xl:col-span-4 lg:col-span-12 gradient-navy rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden flex flex-col justify-center min-h-[300px]">
+                <div class="absolute -right-10 -top-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
+                <div class="relative z-10 text-center md:text-left">
+                    <span class="bg-white/10 text-blue-200 text-xs font-bold px-4 py-2 rounded-full border border-white/10 tracking-widest uppercase">
+                        Akaun Bank Semasa
+                    </span>
+                    <h2 class="text-sm font-medium text-slate-400 mt-6 uppercase tracking-widest">Baki Semasa Gabungan</h2>
+                    <div id="txtBakiBank" class="text-4xl md:text-5xl lg:text-6xl font-black text-yellow-400 mt-2 tracking-tight leading-tight">RM 0.00</div>
+                    
+                    <div class="flex gap-8 mt-6 border-t border-slate-700/50 pt-6">
+                        <div>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-wider mb-1">Total Masuk</p>
+                            <p id="txtTotalMasukBank" class="text-xl font-bold text-emerald-400">RM 0.00</p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-400 uppercase tracking-wider mb-1">Total Keluar</p>
+                            <p id="txtTotalKeluarBank" class="text-xl font-bold text-rose-400">RM 0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="xl:col-span-8 lg:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- PIBG -->
+                <div class="glass-card rounded-[2.5rem] p-8 border-t-8 border-t-blue-500 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 uppercase">1. Dana Am PIBG</h3>
+                            <p class="text-slate-500 text-sm mt-1">Sumbangan Awam, Ibu Bapa & Yuran</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-2xl text-blue-600"><i class="fa-solid fa-scale-balanced text-xl"></i></div>
+                    </div>
+                    <div class="mt-6 bg-blue-50/50 rounded-2xl p-5 flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 border border-blue-100">
+                        <div>
+                            <p class="text-[11px] text-blue-900/60 uppercase font-bold tracking-widest mb-1">Baki Bersih</p>
+                            <p id="pibgBaki" class="text-3xl font-black text-blue-700">RM 0.00</p>
+                        </div>
+                        <div class="text-right text-xs bg-white px-3.5 py-2.5 rounded-xl shadow-sm space-y-1">
+                            <p class="text-emerald-600 font-bold"><i class="fa-solid fa-arrow-down mr-1"></i> <span id="pibgMasuk" class="text-sm">RM 0.00</span></p>
+                            <p class="text-rose-600 font-bold"><i class="fa-solid fa-arrow-up mr-1"></i> <span id="pibgKeluar" class="text-sm">RM 0.00</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KELAS TAMBAHAN -->
+                <div class="glass-card rounded-[2.5rem] p-8 border-t-8 border-t-rose-500 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 uppercase">2. Kelas Tambahan</h3>
+                            <p class="text-slate-500 text-sm mt-1">Pelajaran & Modul Murid</p>
+                        </div>
+                        <div class="bg-rose-100 p-3 rounded-2xl text-rose-600"><i class="fa-solid fa-graduation-cap text-xl"></i></div>
+                    </div>
+                    <div class="mt-6 bg-rose-50/50 rounded-2xl p-5 flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4 border border-rose-100">
+                        <div>
+                            <p class="text-[11px] text-rose-900/60 uppercase font-bold tracking-widest mb-1">Baki Bersih</p>
+                            <p id="kelasBaki" class="text-3xl font-black text-rose-700">RM 0.00</p>
+                        </div>
+                        <div class="text-right text-xs bg-white px-3.5 py-2.5 rounded-xl shadow-sm space-y-1">
+                            <p class="text-emerald-600 font-bold"><i class="fa-solid fa-arrow-down mr-1"></i> <span id="kelasMasuk" class="text-sm">RM 0.00</span></p>
+                            <p class="text-rose-600 font-bold"><i class="fa-solid fa-arrow-up mr-1"></i> <span id="kelasKeluar" class="text-sm">RM 0.00</span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: ANALISIS PERMOHONAN DANA UNIT ================= -->
+        <section>
+            <div class="flex items-center justify-between mb-6 border-b border-slate-200 pb-4">
+                <div class="flex items-center gap-4">
+                    <div class="h-10 w-2.5 bg-indigo-600 rounded-full"></div>
+                    <h3 class="text-2xl font-bold text-slate-800 uppercase tracking-wide">Permohonan Unit</h3>
+                </div>
+                <div class="bg-indigo-50 px-6 py-2 rounded-xl border border-indigo-100 hidden sm:block">
+                    <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest">Total Keseluruhan Dipohon</p>
+                    <p id="txtTotalPermohonanUnit" class="text-2xl font-black text-indigo-900">RM 0.00</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Kurikulum -->
+                <div class="glass-card rounded-[2rem] p-6 border-b-4 border-b-blue-500 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full font-bold text-sm uppercase tracking-wider">Kurikulum</span>
+                        <i class="fa-solid fa-book-open text-blue-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Amaun Dipohon</p>
+                        <h4 id="txtTotalKuri" class="text-3xl font-extrabold text-slate-900 leading-none">RM 0.00</h4>
+                        <p class="text-sm font-semibold text-rose-600 mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Belum Selesai: <span id="txtBakiKuri" class="font-black text-base">RM 0.00</span>
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+                        <div class="bg-emerald-50 border border-emerald-100 text-emerald-800 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Selesai</p>
+                            <p id="kuriSelesaiCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-100 text-amber-800 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pinda</p>
+                            <p id="kuriPindaCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                        <div class="bg-slate-100 border border-slate-200 text-slate-600 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Belum</p>
+                            <p id="kuriBelumCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kokurikulum -->
+                <div class="glass-card rounded-[2rem] p-6 hover:-translate-y-1 transition-all border-b-4 border-b-purple-500 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-purple-100 text-purple-700 px-4 py-1 rounded-full font-bold text-sm uppercase tracking-wider">Kokurikulum</span>
+                        <i class="fa-solid fa-trophy text-purple-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Amaun Dipohon</p>
+                        <h4 id="txtTotalKoko" class="text-3xl font-extrabold text-slate-900 leading-none">RM 0.00</h4>
+                        <p class="text-sm font-semibold text-rose-600 mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Belum Selesai: <span id="txtBakiKoko" class="font-black text-base">RM 0.00</span>
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+                        <div class="bg-emerald-50 border border-emerald-100 text-emerald-800 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Selesai</p>
+                            <p id="kokoSelesaiCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-100 text-amber-800 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pinda</p>
+                            <p id="kokoPindaCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                        <div class="bg-slate-100 border border-slate-200 text-slate-600 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Belum</p>
+                            <p id="kokoBelumCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HEM -->
+                <div class="glass-card rounded-[2rem] p-6 border-b-4 border-b-teal-500 flex flex-col justify-between">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="bg-teal-100 text-teal-700 px-4 py-1 rounded-full font-bold text-sm uppercase tracking-wider">HEM</span>
+                        <i class="fa-solid fa-hand-holding-heart text-teal-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 text-xs uppercase font-bold tracking-widest mb-1">Amaun Dipohon</p>
+                        <h4 id="txtTotalHEM" class="text-3xl font-extrabold text-slate-900 leading-none">RM 0.00</h4>
+                        <p class="text-sm font-semibold text-rose-600 mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Belum Selesai: <span id="txtBakiHEM" class="font-black text-base">RM 0.00</span>
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+                        <div class="bg-emerald-50 border border-emerald-100 text-emerald-800 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Selesai</p>
+                            <p id="hemSelesaiCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-100 text-amber-800 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Pinda</p>
+                            <p id="hemPindaCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                        <div class="bg-slate-100 border border-slate-200 text-slate-600 py-2.5 rounded-xl">
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Belum</p>
+                            <p id="hemBelumCount" class="text-xl font-black mt-0.5">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 3: BORANG PENTADBIR (TERSEMBUNYI SECARA LALAI) ================= -->
+        <div id="sectionBorangKewangan" class="hidden space-y-6 mt-10 bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-200 border-t-8 border-t-yellow-400">
+             
+             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                 <div class="flex items-center gap-4">
+                     <div class="bg-yellow-100 p-2.5 rounded-xl text-yellow-600"><i class="fa-solid fa-user-shield text-lg"></i></div>
+                     <h3 class="text-xl font-bold uppercase text-slate-800">Ruangan Pentadbir (Key-In Data)</h3>
+                 </div>
+                 <!-- BUTANG RESET EMERGENSI UNTUK MEMULIHKAN DATA ASAL -->
+                 <button onclick="bukaModalPengesahanReset()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer transition-colors shadow">
+                     <i class="fa-solid fa-arrows-rotate animate-spin-slow"></i> FORMAT & RESET KE DATA ASAL
+                 </button>
+             </div>
+
+             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                <!-- Wang Masuk -->
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <h4 class="text-lg font-bold text-emerald-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-circle-plus"></i> Rekod Wang Masuk</h4>
+                    <form onsubmit="simpanDuitMasuk(event)" class="space-y-4 text-sm">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="date" id="tarikhMasuk" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                            <select id="pembahagianMasuk" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 font-bold outline-none">
+                                <option value="PIBG">DANA PIBG</option>
+                                <option value="Kelas Tambahan">KELAS TAMBAHAN</option>
+                            </select>
+                        </div>
+                        <select id="katMasuk" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                            <option value="Sumbangan Ibu Bapa">Sumbangan Ibu Bapa</option>
+                            <option value="Sumbangan Ahli">Yuran / Sumbangan PIBG</option>
+                            <option value="Yuran Kelas Tambahan">Yuran Kelas Tambahan</option>
+                            <option value="Sumbangan Luar">Sumbangan Korporat</option>
+                            <option value="Dana KPM">Dana Kerajaan KPM</option>
+                            <option value="Hasil Jualan">Hasil Jualan / Hari Kantin</option>
+                            <option value="Lain-lain">Lain-lain Masuk</option>
+                        </select>
+                        <input type="text" id="perincianMasuk" placeholder="Perincian Transaksi / Nama Pembayar" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                        <input type="number" step="0.01" id="amaunMasuk" placeholder="Amaun (RM)" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-base transition-colors">SIMPAN DUIT MASUK</button>
+                    </form>
+                </div>
+                
+                <!-- Wang Keluar -->
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <h4 class="text-lg font-bold text-rose-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-circle-minus"></i> Rekod Wang Keluar</h4>
+                    <form onsubmit="simpanDuitKeluar(event)" class="space-y-4 text-sm">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="date" id="tarikhKeluar" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                            <select id="pembahagianKeluar" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 font-bold outline-none">
+                                <option value="PIBG">DANA PIBG</option>
+                                <option value="Kelas Tambahan">KELAS TAMBAHAN</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="noCek" placeholder="No. Cek / Baucar" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                            <select id="katKeluar" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                                <option value="Saguhati">Saguhati & Elaun</option>
+                                <option value="Kebajikan">Kebajikan Murid</option>
+                                <option value="Sekolah">Program Sekolah</option>
+                                <option value="Infrastruktur">Infrastruktur</option>
+                                <option value="Bayaran Coway">Bayaran Coway</option>
+                                <option value="Bayaran Lalu Lintas">Bayaran Lalu Lintas</option>
+                                <option value="Fee Bank">Caj Bank</option>
+                                <option value="Lain-lain">Lain-lain Keluar</option>
+                            </select>
+                        </div>
+                        <input type="text" id="perincianKeluar" placeholder="Perincian Penerima" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                        <input type="number" step="0.01" id="amaunKeluar" placeholder="Amaun (RM)" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition-colors text-base shadow">SIMPAN DUIT KELUAR</button>
+                    </form>
+                </div>
+             </div>
+
+             <!-- Yuran Kelas -->
+             <div class="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100 mt-6 text-sm">
+                <h4 class="text-lg font-bold text-indigo-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-users-gear"></i> Kemaskini Status Yuran Kelas</h4>
+                <form onsubmit="simpanBilanganMurid(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <select id="kelasMuridPilih" class="w-full bg-white border border-slate-300 font-bold text-slate-700 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="1 Daffodils">1 Daffodils</option> <option value="1 Camellia">1 Camellia</option>
+                            <option value="2 Daffodils">2 Daffodils</option> <option value="2 Camellia">2 Camellia</option>
+                            <option value="3 Daffodils">3 Daffodils</option> <option value="3 Camellia">3 Camellia</option>
+                            <option value="4 Daffodils">4 Daffodils</option> <option value="4 Camellia">4 Camellia</option>
+                            <option value="5 Daffodils">5 Daffodils</option> <option value="5 Camellia">5 Camellia</option>
+                            <option value="6 Daffodils">6 Daffodils</option> <option value="6 Camellia">6 Camellia</option>
+                        </select>
+                    </div>
+                    <input type="number" id="jumlahMuridInput" placeholder="Jumlah Murid" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="number" id="selesaiBayarInput" placeholder="Selesai Bayar" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow transition-colors text-base">KEMASKINI DATA</button>
+                </form>
+             </div>
+
+             <!-- Borang Permohonan Dana Unit Baru -->
+             <div class="bg-indigo-50/50 rounded-2xl p-6 border border-indigo-100 mt-6 text-sm">
+                <h4 class="text-lg font-bold text-indigo-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar"></i> Daftar Permohonan Dana Unit Baharu</h4>
+                <form onsubmit="simpanPermohonan(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <input type="date" id="tarikhMohon" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select id="unitMohon" class="w-full bg-white border border-slate-300 font-bold text-slate-700 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="Kurikulum">Kurikulum</option>
+                        <option value="Kokurikulum">Kokurikulum</option>
+                        <option value="HEM">HEM</option>
+                    </select>
+                    <input type="text" id="pemohonNama" placeholder="Nama Pemohon" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="number" step="0.01" id="amaunMohon" placeholder="Amaun (RM)" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                    <div class="md:col-span-3">
+                        <input type="text" id="projekMohon" placeholder="Nama Projek / Aktiviti" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow transition-colors text-base">HANTAR PERMOHONAN</button>
+                </form>
+             </div>
+
+             <!-- Borang Anggaran Belanjawan Tetap Baru -->
+             <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 mt-6 text-sm">
+                <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Daftar Anggaran Komitmen / Belanjawan Tetap Baharu</h4>
+                <form onsubmit="simpanAnggaranBelanjawan(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="md:col-span-2">
+                        <input type="text" id="namaAnggaranInput" placeholder="Nama Komitmen (Contoh: Penapis Air Coway)" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                    </div>
+                    <input type="number" step="0.01" id="kadarAnggaranInput" placeholder="Kadar Sebulan (RM)" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                    <input type="number" id="bulanAnggaranInput" placeholder="Bilangan Bulan" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 outline-none">
+                    <div class="md:col-span-4 flex justify-end">
+                        <button type="submit" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2.5 px-8 rounded-xl shadow transition-colors cursor-pointer text-base">TAMBAH ANGGARAN</button>
+                    </div>
+                </form>
+             </div>
+        </div>
+
+        <!-- ================= SECTION 4: PRESTASI & SENARAI JADUAL ================= -->
+        <section class="mt-10 space-y-10">
+            
+            <!-- CARTA ALIRAN & BILANGAN MURID KELAS -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                 
+                 <!-- Carta Aliran Tunai Bulanan -->
+                 <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-xl p-8">
+                      <div class="flex items-center justify-between mb-4">
+                          <div>
+                              <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-chart-line text-blue-600"></i> Analisis Aliran Tunai Tahunan</h3>
+                              <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider font-bold">Graf Perbandingan Keluar & Masuk Setiap Bulan</p>
+                          </div>
+                      </div>
+                      <div class="h-[380px] relative">
+                          <canvas id="chartKewanganDuaDana"></canvas>
+                      </div>
+                 </div>
+
+                 <!-- Carta Taburan Status Yuran Mengikut Kelas -->
+                 <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-xl p-8">
+                      <div class="flex items-center justify-between mb-4">
+                          <div>
+                              <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-chart-bar text-amber-500"></i> Status Kutipan Mengikut Kelas</h3>
+                              <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider font-bold">Graf Perbandingan Selesai vs Belum Bayar</p>
+                          </div>
+                          <div class="bg-emerald-100 text-emerald-800 font-bold text-sm px-4 py-1.5 rounded-xl border border-emerald-200">
+                              Total Murid: <span id="txtJumlahMuridKeseluruhan" class="text-base font-extrabold">330</span>
+                          </div>
+                      </div>
+                      <div class="h-[380px] relative">
+                          <canvas id="chartKewanganKelas"></canvas>
+                      </div>
+                 </div>
+
+            </div>
+
+            <!-- JADUAL 1: BUKU TUNAI (PENERIMAAN & PERBELANJAAN) -->
+            <div class="space-y-6">
+                <!-- KAWALAN BUKU TUNAI (Filter & Eksport Row) -->
+                <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-100 p-3 rounded-xl text-blue-600"><i class="fa-solid fa-filter text-lg"></i></div>
+                        <select id="filterDana" onchange="paparJadual()" class="bg-slate-50 border border-slate-200 text-slate-700 rounded-xl px-4 py-3 text-base font-bold outline-none focus:ring-2 focus:ring-blue-500 min-w-[280px]">
+                            <option value="SEMUA">Papar Semua Dana (Buku Tunai Gabungan)</option>
+                            <option value="PIBG">Dana PIBG Sahaja</option>
+                            <option value="Kelas Tambahan">Kelas Tambahan Sahaja</option>
+                        </select>
+                    </div>
+                    <button onclick="eksportCSV()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-6 py-3 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-file-excel"></i> Eksport (CSV)
+                    </button>
+                </div>
+
+                <!-- JADUAL BUKU TUNAI ASING (Penerimaan vs Perbelanjaan) -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                    
+                    <!-- JADUAL MASUK (PENERIMAAN) -->
+                    <div class="glass-card rounded-[2.5rem] overflow-hidden flex flex-col shadow-xl border-t-8 border-t-emerald-500">
+                        <div class="p-6 bg-white border-b border-slate-200"><h3 class="text-xl font-bold text-slate-800">Penyata Penerimaan (Wang Masuk)</h3></div>
+                        <div class="overflow-x-auto max-h-[500px] bg-white">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th class="p-4 whitespace-nowrap">Tarikh</th>
+                                        <th class="p-4">Butiran</th>
+                                        <th class="p-4 text-right">Debit (RM)</th>
+                                        <th class="p-4 text-center id-tindakan hidden">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="badanJadualMasuk" class="text-sm md:text-base font-medium text-slate-700 divide-y divide-slate-100">
+                                    <!-- JS Inject -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- JADUAL KELUAR (PERBELANJAAN) -->
+                    <div class="glass-card rounded-[2.5rem] overflow-hidden flex flex-col shadow-xl border-t-8 border-t-rose-500">
+                        <div class="p-6 bg-white border-b border-slate-200"><h3 class="text-xl font-bold text-slate-800">Penyata Pembayaran (Wang Keluar)</h3></div>
+                        <div class="overflow-x-auto max-h-[500px] bg-white">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th class="p-4 whitespace-nowrap">Tarikh</th>
+                                        <th class="p-4">Butiran</th>
+                                        <th class="p-4 text-right">Kredit (RM)</th>
+                                        <th class="p-4 text-center id-tindakan hidden">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="badanJadualKeluar" class="text-sm md:text-base font-medium text-slate-700 divide-y divide-slate-100">
+                                    <!-- JS Inject -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JADUAL 2: RINGKASAN KUTIPAN KELAS -->
+            <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-xl border-t-8 border-t-amber-500">
+                <div class="p-6 bg-white border-b border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-wallet text-amber-600"></i> Penyata Pembayaran Yuran Mengikut Kelas</h3>
+                    <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider font-bold">Ringkasan Status Murid Selesai & Belum Selesai Bayar</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 text-slate-600 text-sm font-bold uppercase border-b border-slate-200">
+                            <tr>
+                                <th class="p-5">Nama Kelas</th>
+                                <th class="p-5 text-center bg-blue-50/20 text-slate-800">Jumlah Murid (A)</th>
+                                <th class="p-5 text-center bg-emerald-50/20 text-emerald-800">Selesai Bayar (B)</th>
+                                <th class="p-5 text-center bg-rose-50/20 text-rose-800">Belum Bayar (A - B)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="badanAnalisisKutipanKelas" class="text-base md:text-lg font-semibold text-slate-700 divide-y divide-slate-100">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- JADUAL 3: SENARAI PERMOHONAN DANA UNIT -->
+            <div class="glass-card rounded-[2.5rem] overflow-hidden flex flex-col shadow-xl">
+                <div class="p-6 bg-white border-b border-slate-200 flex flex-col sm:flex-row justify-between gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800">Permohonan Dana Setiap Unit</h3>
+                        <p class="text-slate-500 text-xs mt-1 uppercase tracking-wider font-bold">Rekod Semakan Status Kelulusan Bantuan Aktiviti Sekolah</p>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <select id="filterUnit" onchange="paparJadualPermohonan()" class="bg-slate-50 border rounded-xl px-4 py-2 text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="SEMUA">Semua Unit</option>
+                            <option value="Kurikulum">Kuri</option>
+                            <option value="Kokurikulum">Koko</option>
+                            <option value="HEM">HEM</option>
+                        </select>
+                        <select id="filterStatus" onchange="paparJadualPermohonan()" class="bg-slate-50 border rounded-xl px-4 py-2 text-sm font-bold outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="SEMUA">Semua Status</option>
+                            <option value="Selesai">Selesai</option>
+                            <option value="Pinda">Pinda</option>
+                            <option value="Belum">Belum</option>
+                        </select>
+                        <button onclick="eksportPermohonanCSV()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-5 py-2.5 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-file-excel"></i> CSV Permohonan
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto max-h-[500px] bg-white">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-5 whitespace-nowrap">Tarikh</th>
+                                <th class="p-5">Pemohon & Aktiviti</th>
+                                <th class="p-5 text-right">Amaun</th>
+                                <th class="p-5 text-center">Status</th>
+                                <th class="p-5 text-center id-tindakanPermohonan hidden">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="badanJadualPermohonan" class="text-sm md:text-base font-medium text-slate-700 divide-y divide-slate-100">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= SECTION 5: ANGGARAN BELANJAWAN PROJEKSI BAKI AM PIBG ================= -->
+            <div class="glass-card rounded-[2.5rem] overflow-hidden shadow-2xl border-t-8 border-t-slate-700">
+                <div class="p-8 md:p-10 bg-slate-900 text-white">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="bg-yellow-400 p-3.5 rounded-2xl text-slate-950"><i class="fa-solid fa-calculator text-2xl"></i></div>
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-bold uppercase text-yellow-400 tracking-tight">Anggaran Belanjawan Dana Am PIBG</h3>
+                            <p class="text-slate-400 text-sm uppercase tracking-wider font-bold mt-1">Unjuran Baki Komitmen Aliran Tunai (Julai - Disember)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8 items-center">
+                        <div class="lg:col-span-7 space-y-4 text-base md:text-lg">
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                <span class="text-slate-300">Baki Semasa Dana Am PIBG:</span>
+                                <span id="txtAnggaranBakiPIBG" class="font-bold text-emerald-400 text-xl">RM 0.00</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                                <span class="text-slate-300">Tolak: Permohonan Dana Unit (Belum Selesai):</span>
+                                <span id="txtAnggaranTolakPermohonan" class="font-bold text-rose-400 text-xl">- RM 0.00</span>
+                            </div>
+                            
+                            <!-- TEMPAT ANGGARAN DINAMIK DIINJEK (Lalu Lintas, Coway, dan Anggaran Baru) -->
+                            <div id="senaraiAnggaranDinamik" class="space-y-4">
+                                <!-- Anggaran komitmen diletakkan di sini secara dinamik -->
+                            </div>
+                        </div>
+                        
+                        <div class="lg:col-span-5 bg-slate-950/80 rounded-[2rem] p-8 text-center border border-slate-800 shadow-inner flex flex-col justify-center min-h-[220px]">
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Anggaran Baki Bersih Yang Tinggal</p>
+                            <div id="txtAnggaranBakiTinggal" class="text-3xl md:text-4xl lg:text-5xl font-black text-emerald-400 tracking-tight">RM 0.00</div>
+                            <p class="text-[11px] text-slate-500 mt-4 leading-relaxed font-bold">Projeksi baki ini mengambil kira semua liabiliti belum selesai dan komitmen bulanan tetap sehingga akhir tahun.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- MODAL PASSWORD -->
+    <div id="modalKataLaluan" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
+        <div class="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center space-y-5 transform transition-all text-sm">
+            <div class="w-16 h-10 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner"><i class="fa-solid fa-shield-halved"></i></div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-800">Akses Pentadbir</h3>
+                <p class="text-xs text-slate-500 mt-1">Sila masukkan kata laluan keselamatan</p>
+            </div>
+            <input type="password" id="inputKunci" placeholder="••••" class="w-full bg-slate-100 rounded-2xl p-4 text-center text-2xl tracking-[0.8rem] font-black outline-none border-2 border-transparent focus:border-blue-500 transition-colors">
+            <p id="pesanRalatLaluan" class="text-xs text-rose-500 font-bold uppercase tracking-widest hidden">KATA LALUAN SALAH!</p>
+            <div class="flex gap-3 pt-1">
+                <button onclick="tutupModalLaluan()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-2xl font-bold transition-colors">BATAL</button>
+                <button onclick="sahkanKataLaluan()" class="w-1/2 bg-blue-900 hover:bg-blue-950 text-white py-3 rounded-2xl font-bold shadow transition-colors">SAHKAN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRM DELETE -->
+    <div id="modalPengesahan" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
+        <div class="bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl text-center space-y-6">
+            <div class="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner"><i class="fa-solid fa-trash-can text-3xl"></i></div>
+            <div>
+                <h3 id="txtSahkanPadamTajuk" class="text-xl font-bold text-slate-800">Padam Rekod?</h3>
+                <p id="txtSahkanPadamKeterangan" class="text-sm text-slate-500 mt-2">Tindakan ini tidak boleh diundurkan semula.</p>
+            </div>
+            <div class="flex gap-4 pt-4">
+                <button onclick="tutupModalPengesahan()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 py-4 rounded-2xl text-sm font-bold transition-colors">BATAL</button>
+                <button id="btnSahkanPadam" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-2xl text-sm font-bold shadow-lg transition-colors">PADAM TERUS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFIKASI TOAST -->
+    <div id="notifikasiToast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] transform translate-y-24 opacity-0 transition-all duration-300 ease-out">
+        <div class="bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border border-slate-700 text-sm">
+            <span><i class="fa-solid fa-check-circle text-emerald-400 text-lg"></i></span>
+            <p id="mesejToast" class="text-sm font-bold uppercase tracking-widest"></p>
+        </div>
+    </div>
+
+    <!-- INTEGRASI CLOUD DATABASE (FIREBASE FIRESTORE) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Pembolehubah Global daripada Persekitaran Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'st-annes-covenant-pibg';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth;
+        let isFirebaseActive = false;
+
+        // Data Permulaan Tempatan Sebagai Lalai (Data sedia ada yang telah anda masukkan)
+        const defaultDatabase = [
+            { id: 1, tarikh: "2026-01-15", dana: "PIBG", jenis: "Masuk", kategori: "Sumbangan Ibu Bapa", perincian: "Kutipan Sumbangan PIBG Fasa 1", amaun: 24500.00 },
+            { id: 2, tarikh: "2026-02-10", dana: "PIBG", jenis: "Masuk", kategori: "Sumbangan Luar", perincian: "Sumbangan Korporat Syarikat Al-Ikhsan", amaun: 5000.00 },
+            { id: 3, tarikh: "2026-02-20", dana: "PIBG", jenis: "Keluar", kategori: "Infrastruktur", perincian: "Membaiki Bumbung Dewan Sekolah (Cek: 489201)", amaun: 3500.00 },
+            { id: 4, tarikh: "2026-03-05", dana: "Kelas Tambahan", jenis: "Masuk", kategori: "Yuran Kelas Tambahan", perincian: "Kutipan Yuran Kelas Tambahan Mac", amaun: 12400.00 },
+            { id: 5, tarikh: "2026-03-12", dana: "Kelas Tambahan", jenis: "Keluar", kategori: "Saguhati", perincian: "Elaun Guru Kelas Tambahan Fasa 1 (Cek: 489202)", amaun: 4200.00 },
+            { id: 6, tarikh: "2026-04-02", dana: "PIBG", jenis: "Keluar", kategori: "Kebajikan", perincian: "Sumbangan Kebajikan Anak Yatim & Miskin (Cek: 489203)", amaun: 1500.00 },
+            { id: 7, tarikh: "2026-04-18", dana: "PIBG", jenis: "Masuk", kategori: "Hasil Jualan", perincian: "Keuntungan Hari Kantin & Keusahawanan", amaun: 3850.00 },
+            { id: 8, tarikh: "2026-05-10", dana: "Kelas Tambahan", jenis: "Masuk", kategori: "Yuran Kelas Tambahan", perincian: "Kutipan Yuran Kelas Tambahan Mei", amaun: 11150.00 },
+            { id: 9, tarikh: "2026-05-25", dana: "PIBG", jenis: "Keluar", kategori: "Sekolah", perincian: "Sponsor Hadiah Kejohanan Sukan Tahunan (Cek: 489204)", amaun: 2800.00 },
+            { id: 10, tarikh: "2026-06-05", dana: "Kelas Tambahan", jenis: "Keluar", kategori: "Saguhati", perincian: "Bayaran Buku Modul & Cetakan Latihan (Cek: 489205)", amaun: 3100.00 }
+        ];
+
+        const defaultPermohonanDatabase = [
+            { id: 101, tarikh: "2026-03-01", unit: "Kurikulum", projek: "Klinik Kecemerlangan UPSR & Bengkel Teknik Menjawab", pemohon: "Puan Noraini Ahmad", amaun: 1500.00, status: "Selesai" },
+            { id: 102, tarikh: "2026-03-15", unit: "Kokurikulum", projek: "Sukan Tara & Kejohanan Balapan Sekolah 2026", pemohon: "Encik Khairul Azhar", amaun: 3000.00, status: "Selesai" },
+            { id: 103, tarikh: "2026-04-10", unit: "HEM", projek: "Program Watikah Pelantikan Pemimpin Muda", pemohon: "Cik Siti Aminah", amaun: 850.00, status: "Selesai" },
+            { id: 104, tarikh: "2026-05-02", unit: "Kurikulum", projek: "Pembelian Set Kamus Dewan & Kamus Bergambar Pusat Sumber", pemohon: "Puan Zanariah", amaun: 1200.00, status: "Belum" },
+            { id: 105, tarikh: "2026-05-20", unit: "Kokurikulum", projek: "Yuran Penyertaan & Pengangkutan Pertandingan Kawad Kaki", pemohon: "Encik Faisal", amaun: 1800.00, status: "Pinda" },
+            { id: 106, tarikh: "2026-06-12", unit: "HEM", projek: "Naiktaraf Laluan Berbumbung & Mural Blok Kebajikan", pemohon: "Puan Rohana", amaun: 2500.00, status: "Belum" }
+        ];
+
+        const defaultMuridDatabase = {
+            "1 Daffodils": { total: 36, selesai: 28 }, "1 Camellia": { total: 28, selesai: 20 },
+            "2 Daffodils": { total: 32, selesai: 30 }, "2 Camellia": { total: 30, selesai: 25 },
+            "3 Daffodils": { total: 29, selesai: 29 }, "3 Camellia": { total: 31, selesai: 22 },
+            "4 Daffodils": { total: 35, selesai: 30 }, "4 Camellia": { total: 33, selesai: 24 },
+            "5 Daffodils": { total: 28, selesai: 28 }, "5 Camellia": { total: 27, selesai: 20 },
+            "6 Daffodils": { total: 30, selesai: 30 }, "6 Camellia": { total: 29, selesai: 26 }
+        };
+
+        const defaultAnggaranDatabase = [
+            { id: 11, nama: 'Unjuran Bayaran Pengawal Lalu Lintas', kadar: 900.00, bulan: 6, jumlah: 5400.00 },
+            { id: 12, nama: 'Unjuran Bayaran Penapis Air Coway', kadar: 123.00, bulan: 6, jumlah: 738.00 }
+        ];
+
+        // Menyalin data asal ke memori aktif
+        let database = JSON.parse(JSON.stringify(defaultDatabase));
+        let permohonanDatabase = JSON.parse(JSON.stringify(defaultPermohonanDatabase));
+        let muridDatabase = JSON.parse(JSON.stringify(defaultMuridDatabase));
+        let anggaranDatabase = JSON.parse(JSON.stringify(defaultAnggaranDatabase));
+
+        let modAdmin = false;
+        let idRekodMahuDipadam = null;
+        let jenisPadam = 'kewangan';
+        let cartaKewanganInstance = null;
+        let cartaKewanganKelasInstance = null;
+
+        // --- PENGURUSAN AUTORISASI & SAMBUNGAN AWAN ---
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                const mulakanSesiAuth = async () => {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+
+                mulakanSesiAuth().then(() => {
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            aktifkanPenyamaanAwanDinamik();
+                        }
+                    });
+                }).catch(err => {
+                    console.error("Firebase Gagal: Beralih ke storan lokal.", err);
+                    functionFallbackLocal();
+                });
+            } catch (err) {
+                console.error("Ralat Firebase:", err);
+                functionFallbackLocal();
+            }
+        } else {
+            functionFallbackLocal();
+        }
+
+        // --- SISTEM AWAN REAL-TIME DENGAN AUTO-SEEDING DATA ASAL ---
+        function aktifkanPenyamaanAwanDinamik() {
+            isFirebaseActive = true;
+
+            // Memuat naik data asal jika koleksi transaksi awan masih kosong
+            const refTransaksi = collection(db, 'artifacts', appId, 'public', 'data', 'transaksi');
+            onSnapshot(refTransaksi, (snapshot) => {
+                if (snapshot.empty) {
+                    database.forEach(item => {
+                        addDoc(refTransaksi, item);
+                    });
+                } else {
+                    database = [];
+                    snapshot.forEach(docSnap => {
+                        let data = docSnap.data();
+                        data.idCloud = docSnap.id;
+                        database.push(data);
+                    });
+                    prosesKewanganAutomatik();
+                }
+            }, paparRalatAwan);
+
+            // Memuat naik data asal jika koleksi permohonan awan masih kosong
+            const refPermohonan = collection(db, 'artifacts', appId, 'public', 'data', 'permohonan');
+            onSnapshot(refPermohonan, (snapshot) => {
+                if (snapshot.empty) {
+                    permohonanDatabase.forEach(item => {
+                        addDoc(refPermohonan, item);
+                    });
+                } else {
+                    permohonanDatabase = [];
+                    snapshot.forEach(docSnap => {
+                        let data = docSnap.data();
+                        data.idCloud = docSnap.id;
+                        permohonanDatabase.push(data);
+                    });
+                    prosesPermohonanAutomatik();
+                }
+            }, paparRalatAwan);
+
+            // Memuat naik data asal jika dokumen yuran kelas awan masih kosong
+            const docRefMurid = doc(db, 'artifacts', appId, 'public', 'data', 'murid_kelas', 'data_murid');
+            onSnapshot(docRefMurid, (docSnap) => {
+                if (!docSnap.exists()) {
+                    setDoc(docRefMurid, muridDatabase);
+                } else {
+                    muridDatabase = docSnap.data();
+                }
+                paparAnalisisKutipanKelas();
+                binaCartaAliran();
+            }, paparRalatAwan);
+
+            // Memuat naik data asal jika anggaran belanjawan masih kosong
+            const refAnggaran = collection(db, 'artifacts', appId, 'public', 'data', 'anggaran');
+            onSnapshot(refAnggaran, (snapshot) => {
+                if (snapshot.empty) {
+                    anggaranDatabase.forEach(item => {
+                        addDoc(refAnggaran, item);
+                    });
+                } else {
+                    anggaranDatabase = [];
+                    snapshot.forEach(docSnap => {
+                        let data = docSnap.data();
+                        data.idCloud = docSnap.id;
+                        anggaranDatabase.push(data);
+                    });
+                    prosesKewanganAutomatik();
+                }
+            }, paparRalatAwan);
+        }
+
+        function paparRalatAwan(err) {
+            console.error("Ralat Sambungan Awan:", err);
+            tunjukToast("Sambungan awan terganggu. Mod luar talian diaktifkan.");
+        }
+
+        function functionFallbackLocal() {
+            database = JSON.parse(localStorage.getItem('st_annes_pibg_db_v2')) || database;
+            permohonanDatabase = JSON.parse(localStorage.getItem('st_annes_pibg_permohonan_db')) || permohonanDatabase;
+            muridDatabase = JSON.parse(localStorage.getItem('st_annes_pibg_murid_db')) || muridDatabase;
+            anggaranDatabase = JSON.parse(localStorage.getItem('st_annes_pibg_anggaran_v2')) || anggaranDatabase;
+            prosesKewanganAutomatik();
+            prosesPermohonanAutomatik();
+        }
+
+        function simpanStorage() {
+            localStorage.setItem('st_annes_pibg_db_v2', JSON.stringify(database));
+            prosesKewanganAutomatik();
+        }
+
+        // --- KEMASUKAN DATA BARU (REKOD INTERNET & LOKAL) ---
+        async function simpanDuitMasuk(e) {
+            e.preventDefault();
+            const rekod = {
+                tarikh: document.getElementById('tarikhMasuk').value,
+                dana: document.getElementById('pembahagianMasuk').value, 
+                jenis: 'Masuk',
+                kategori: document.getElementById('katMasuk').value,
+                kelas: 'Umum', 
+                perincian: document.getElementById('perincianMasuk').value,
+                amaun: parseFloat(document.getElementById('amaunMasuk').value),
+                id: Date.now()
+            };
+
+            if (isFirebaseActive) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'transaksi'), rekod);
+            } else {
+                database.push(rekod);
+                simpanStorage();
+            }
+            e.target.reset(); 
+            tunjukToast("WANG MASUK DISIMPAN");
+        }
+
+        async function simpanDuitKeluar(e) {
+            e.preventDefault();
+            const rekod = {
+                tarikh: document.getElementById('tarikhKeluar').value,
+                dana: document.getElementById('pembahagianKeluar').value, 
+                jenis: 'Keluar',
+                kategori: document.getElementById('katKeluar').value,
+                perincian: `${document.getElementById('perincianKeluar').value} (Cek: ${document.getElementById('noCek').value})`,
+                amaun: parseFloat(document.getElementById('amaunKeluar').value),
+                id: Date.now()
+            };
+
+            if (isFirebaseActive) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'transaksi'), rekod);
+            } else {
+                database.push(rekod);
+                simpanStorage();
+            }
+            e.target.reset(); 
+            tunjukToast("WANG KELUAR DISIMPAN");
+        }
+
+        async function simpanPermohonan(e) {
+            e.preventDefault();
+            const rekod = {
+                tarikh: document.getElementById('tarikhMohon').value,
+                unit: document.getElementById('unitMohon').value,
+                projek: document.getElementById('projekMohon').value,
+                pemohon: document.getElementById('pemohonNama').value,
+                amaun: parseFloat(document.getElementById('amaunMohon').value),
+                status: 'Belum',
+                id: Date.now()
+            };
+
+            if (isFirebaseActive) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'permohonan'), rekod);
+            } else {
+                permohonanDatabase.push(rekod);
+                localStorage.setItem('st_annes_pibg_permohonan_db', JSON.stringify(permohonanDatabase));
+                prosesPermohonanAutomatik();
+            }
+            e.target.reset(); 
+            tunjukToast("PERMOHONAN BERJAYA DIREKOD!");
+        }
+
+        async function simpanAnggaranBelanjawan(e) {
+            e.preventDefault();
+            const nama = document.getElementById('namaAnggaranInput').value;
+            const kadar = parseFloat(document.getElementById('kadarAnggaranInput').value);
+            const bulan = parseInt(document.getElementById('bulanAnggaranInput').value);
+            const jumlah = kadar * bulan;
+
+            const rekod = {
+                nama: nama,
+                kadar: kadar,
+                bulan: bulan,
+                jumlah: jumlah,
+                id: Date.now()
+            };
+
+            if (isFirebaseActive) {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'anggaran'), rekod);
+            } else {
+                anggaranDatabase.push(rekod);
+                localStorage.setItem('st_annes_pibg_anggaran_v2', JSON.stringify(anggaranDatabase));
+                prosesKewanganAutomatik();
+            }
+            e.target.reset();
+            tunjukToast("ANGGARAN BELANJAWAN DITAMBAH!");
+        }
+
+        async function padamAnggaran(idCloud, localId) {
+            if (isFirebaseActive) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'anggaran', idCloud));
+            } else {
+                anggaranDatabase = anggaranDatabase.filter(i => i.id !== localId);
+                localStorage.setItem('st_annes_pibg_anggaran_v2', JSON.stringify(anggaranDatabase));
+                prosesKewanganAutomatik();
+            }
+            tunjukToast("ANGGARAN BELANJAWAN DIPADAM!");
+        }
+
+        async function simpanBilanganMurid(e) {
+            e.preventDefault();
+            let k = document.getElementById('kelasMuridPilih').value;
+            muridDatabase[k] = {
+                total: parseInt(document.getElementById('jumlahMuridInput').value),
+                selesai: parseInt(document.getElementById('selesaiBayarInput').value)
+            };
+
+            if (isFirebaseActive) {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'murid_kelas', 'data_murid'), muridDatabase);
+            } else {
+                localStorage.setItem('st_annes_pibg_murid_db', JSON.stringify(muridDatabase));
+                paparAnalisisKutipanKelas();
+                binaCartaAliran();
+            }
+            e.target.reset(); 
+            tunjukToast("YURAN KELAS DIKEMASKINI");
+        }
+
+        async function tukarStatus(idCloud, val, localId) {
+            if (isFirebaseActive) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'permohonan', idCloud), { status: val });
+            } else {
+                let item = permohonanDatabase.find(i => i.id === localId);
+                if (item) {
+                    item.status = val;
+                    localStorage.setItem('st_annes_pibg_permohonan_db', JSON.stringify(permohonanDatabase));
+                    prosesPermohonanAutomatik(); 
+                    prosesKewanganAutomatik();
+                }
+            }
+            tunjukToast("STATUS PERMOHONAN DIKEMASKINI");
+        }
+
+        // --- SISTEM PEMPROSESAN KEWANGAN VISUAL & PROJEKSI ---
+        function prosesKewanganAutomatik() {
+            let totalMasuk = 0, totalKeluar = 0;
+            let pIn = 0, pOut = 0, kIn = 0, kOut = 0;
+
+            database.forEach(i => {
+                if (i.jenis === 'Masuk') {
+                    totalMasuk += i.amaun;
+                    if (i.dana === 'PIBG') pIn += i.amaun; else kIn += i.amaun;
+                } else {
+                    totalKeluar += i.amaun;
+                    if (i.dana === 'PIBG') pOut += i.amaun; else kOut += i.amaun;
+                }
+            });
+
+            document.getElementById('txtBakiBank').innerText = `RM ${(totalMasuk - totalKeluar).toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            document.getElementById('txtTotalMasukBank').innerText = `RM ${totalMasuk.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            document.getElementById('txtTotalKeluarBank').innerText = `RM ${totalKeluar.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+
+            document.getElementById('pibgBaki').innerText = `RM ${(pIn - pOut).toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            document.getElementById('pibgMasuk').innerText = `RM ${pIn.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            document.getElementById('pibgKeluar').innerText = `RM ${pOut.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+
+            document.getElementById('kelasBaki').innerText = `RM ${(kIn - kOut).toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            document.getElementById('kelasMasuk').innerText = `RM ${kIn.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            document.getElementById('kelasKeluar').innerText = `RM ${kOut.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+
+            paparJadual();
+            binaCartaAliran();
+            prosesAnggaranBelanjawan(pIn - pOut);
+        }
+
+        function paparJadual() {
+            const badanMasuk = document.getElementById('badanJadualMasuk');
+            const badanKeluar = document.getElementById('badanJadualKeluar');
+            const fDana = document.getElementById('filterDana').value;
+            
+            if (!badanMasuk || !badanKeluar) return;
+            badanMasuk.innerHTML = '';
+            badanKeluar.innerHTML = '';
+            
+            let list = database.filter(i => fDana === 'SEMUA' || i.dana === fDana).sort((a,b)=>new Date(a.tarikh)-new Date(b.tarikh));
+            
+            list.forEach(i => {
+                let badge = `<span class="px-2 py-0.5 rounded text-xs font-bold uppercase ${i.dana==='PIBG'?'bg-blue-100 text-blue-700':'bg-rose-100 text-rose-700'}">${i.dana}</span>`;
+                let tr = document.createElement('tr');
+                tr.className = "text-base hover:bg-slate-50";
+                
+                let idUnik = i.idCloud || i.id;
+                let tindakanBtn = `<td class="p-4 text-center id-tindakan ${modAdmin?'':'hidden'}"><button onclick="padamItem('${idUnik}','kewangan', ${i.id || null})" class="text-rose-500 bg-rose-50 p-1 rounded cursor-pointer"><i class="fa-solid fa-trash-can"></i></button></td>`;
+
+                if (i.jenis === 'Masuk') {
+                    tr.innerHTML = `<td class="p-4 text-slate-500 whitespace-nowrap">${i.tarikh}</td><td class="p-4"><div>${badge}</div><span class="font-bold text-slate-900">${i.perincian}</span></td><td class="p-4 text-right font-bold text-emerald-600">RM ${i.amaun.toFixed(2)}</td>${tindakanBtn}`;
+                    badanMasuk.appendChild(tr);
+                } else {
+                    tr.innerHTML = `<td class="p-4 text-slate-500 whitespace-nowrap">${i.tarikh}</td><td class="p-4"><div>${badge}</div><span class="font-bold text-slate-900">${i.perincian}</span></td><td class="p-4 text-right font-bold text-rose-600">RM ${i.amaun.toFixed(2)}</td>${tindakanBtn}`;
+                    badanKeluar.appendChild(tr);
+                }
+            });
+        }
+
+        function prosesPermohonanAutomatik() {
+            let kuri = {t:0, un:0, s:0, p:0, b:0}, koko = {t:0, un:0, s:0, p:0, b:0}, hem = {t:0, un:0, s:0, p:0, b:0};
+            let total = 0;
+
+            permohonanDatabase.forEach(i => {
+                total += i.amaun;
+                let u = i.unit==='Kurikulum'?kuri:(i.unit==='Kokurikulum'?koko:hem);
+                u.t += i.amaun;
+                if(i.status==='Selesai') u.s++;
+                else {
+                    if(i.status==='Pinda') u.p++; else u.b++;
+                    u.un += i.amaun;
+                }
+            });
+
+            const txtTotalPermohonanUnit = document.getElementById('txtTotalPermohonanUnit');
+            if (txtTotalPermohonanUnit) txtTotalPermohonanUnit.innerText = `RM ${total.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            
+            const setUnit = (prefix, obj) => {
+                const totalEl = document.getElementById(`txtTotal${prefix}`);
+                const bakiEl = document.getElementById(`txtBaki${prefix}`);
+                const selesaiEl = document.getElementById(`${prefix.toLowerCase()}SelesaiCount`);
+                const pindaEl = document.getElementById(`${prefix.toLowerCase()}PindaCount`);
+                const belumEl = document.getElementById(`${prefix.toLowerCase()}BelumCount`);
+
+                if (totalEl) totalEl.innerText = `RM ${obj.t.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+                if (bakiEl) bakiEl.innerText = `RM ${obj.un.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+                if (selesaiEl) selesaiEl.innerText = obj.s;
+                if (pindaEl) pindaEl.innerText = obj.p;
+                if (belumEl) belumEl.innerText = obj.b;
+            };
+
+            setUnit('Kuri', kuri); setUnit('Koko', koko); setUnit('HEM', hem);
+            paparJadualPermohonan();
+        }
+
+        function paparJadualPermohonan() {
+            const badan = document.getElementById('badanJadualPermohonan');
+            if (!badan) return;
+            const fUnit = document.getElementById('filterUnit').value;
+            const fStat = document.getElementById('filterStatus').value;
+            badan.innerHTML = '';
+            
+            let filtered = permohonanDatabase.filter(i => (fUnit==='SEMUA' || i.unit===fUnit) && (fStat==='SEMUA' || i.status===fStat));
+            
+            filtered.forEach(i => {
+                let tr = document.createElement('tr');
+                tr.className = "text-base hover:bg-slate-50";
+                let badge = `<span class="text-xs font-bold px-2 py-0.5 rounded ${i.unit==='Kurikulum'?'bg-blue-100 text-blue-700':i.unit==='Kokurikulum'?'bg-purple-100 text-purple-700':'bg-teal-100 text-teal-700'}">${i.unit}</span>`;
+                
+                let idUnik = i.idCloud || i.id;
+                let selectStatus = modAdmin 
+                    ? `<select onchange="tukarStatus('${i.idCloud || ''}', this.value, ${i.id || null})" class="border rounded p-1 font-bold cursor-pointer"><option value="Belum" ${i.status==='Belum'?'selected':''}>Belum</option><option value="Selesai" ${i.status==='Selesai'?'selected':''}>Selesai</option><option value="Pinda" ${i.status==='Pinda'?'selected':''}>Pinda</option></select>`
+                    : `<span class="px-2 py-1 rounded text-xs font-bold ${i.status==='Selesai'?'bg-emerald-100 text-emerald-700':i.status==='Pinda'?'bg-amber-100 text-amber-700':'bg-slate-200 text-slate-600'}">${i.status}</span>`;
+
+                tr.innerHTML = `<td class="p-4 text-slate-500 whitespace-nowrap">${i.tarikh}</td><td class="p-4"><div>${badge}</div><div class="font-bold text-slate-900">${i.projek}</div><div class="text-xs text-slate-400">${i.pemohon}</div></td><td class="p-4 text-right font-bold text-indigo-700">RM ${i.amaun.toFixed(2)}</td><td class="p-4 text-center">${selectStatus}</td><td class="p-4 text-center id-tindakanPermohonan ${modAdmin?'':'hidden'}"><button onclick="padamItem('${idUnik}','permohonan', ${i.id || null})" class="text-rose-500 bg-rose-50 p-1 rounded cursor-pointer"><i class="fa-solid fa-trash-can"></i></button></td>`;
+                badan.appendChild(tr);
+            });
+        }
+
+        function paparAnalisisKutipanKelas() {
+            const badan = document.getElementById('badanAnalisisKutipanKelas');
+            if (!badan) return;
+            badan.innerHTML = '';
+            let tm = 0, ts = 0, tb = 0;
+
+            Object.keys(muridDatabase).forEach(k => {
+                let obj = muridDatabase[k];
+                let belum = obj.total - obj.selesai;
+                tm += obj.total; ts += obj.selesai; tb += belum;
+
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 text-base md:text-lg";
+                tr.innerHTML = `<td class="p-4 font-bold">${k}</td><td class="p-4 text-center">${obj.total}</td><td class="p-4 text-center text-emerald-600 font-bold">${obj.selesai}</td><td class="p-4 text-center text-rose-600 font-bold">${belum}</td>`;
+                badan.appendChild(tr);
+            });
+
+            const totalMuridEl = document.getElementById('txtJumlahMuridKeseluruhan');
+            if (totalMuridEl) totalMuridEl.innerText = tm;
+        }
+
+        function prosesAnggaranBelanjawan(bakiPIBG) {
+            let unDisolved = 0;
+            permohonanDatabase.forEach(i => { if(i.status !== 'Selesai') unDisolved += i.amaun; });
+            
+            let totalTolakAnggaran = 0;
+            const container = document.getElementById('senaraiAnggaranDinamik');
+            if (container) {
+                container.innerHTML = '';
+                anggaranDatabase.forEach(item => {
+                    totalTolakAnggaran += item.jumlah;
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between border-b border-slate-800 pb-2 text-base md:text-lg";
+                    
+                    let deleteBtn = '';
+                    let idUnik = item.idCloud || item.id;
+                    if (modAdmin) {
+                        deleteBtn = `<button onclick="padamAnggaran('${item.idCloud || ''}', ${item.id || null})" class="text-rose-400 hover:text-rose-600 bg-rose-50/10 p-1.5 rounded ml-2 cursor-pointer"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
+                    }
+
+                    div.innerHTML = `
+                        <span class="text-slate-400">${item.nama} <span class="text-xs text-slate-500 font-bold block md:inline md:ml-2">(RM ${item.kadar.toFixed(2)} × ${item.bulan} Bulan)</span></span>
+                        <span class="font-bold text-rose-400">- RM ${item.jumlah.toLocaleString('en-MY', {minimumFractionDigits: 2})} ${deleteBtn}</span>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            let bakiAkhir = bakiPIBG - unDisolved - totalTolakAnggaran;
+
+            const bakiPibgEl = document.getElementById('txtAnggaranBakiPIBG');
+            const tolakPermohonanEl = document.getElementById('txtAnggaranTolakPermohonan');
+            const bakiTinggalEl = document.getElementById('txtAnggaranBakiTinggal');
+
+            if (bakiPibgEl) bakiPibgEl.innerText = `RM ${bakiPIBG.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            if (tolakPermohonanEl) tolakPermohonanEl.innerText = `- RM ${unDisolved.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+            if (bakiTinggalEl) {
+                bakiTinggalEl.innerText = `RM ${bakiAkhir.toLocaleString('en-MY', {minimumFractionDigits: 2})}`;
+                if (bakiAkhir < 0) {
+                    bakiTinggalEl.className = "text-3xl md:text-5xl font-black text-rose-500 mt-2";
+                } else {
+                    bakiTinggalEl.className = "text-3xl md:text-5xl font-black text-emerald-400 mt-2";
+                }
+            }
+        }
+
+        function binaCartaAliran() {
+            let pibgBulanan = Array(12).fill(0), kelasBulanan = Array(12).fill(0);
+            database.forEach(i => {
+                let m = new Date(i.tarikh).getMonth();
+                let amt = i.jenis === 'Masuk' ? i.amaun : -i.amaun;
+                if(i.dana==='PIBG') pibgBulanan[m]+=amt; else kelasBulanan[m]+=amt;
+            });
+
+            const canvasLine = document.getElementById('chartKewanganDuaDana');
+            if (canvasLine) {
+                if(cartaKewanganInstance) cartaKewanganInstance.destroy();
+                cartaKewanganInstance = new Chart(canvasLine.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan','Feb','Mac','Apr','Mei','Jun','Jul','Ogo','Sep','Okt','Nov','Dis'],
+                        datasets: [
+                            { label: 'PIBG', data: pibgBulanan, borderColor: '#2563eb', tension: 0.3, fill: false },
+                            { label: 'Kelas Tambahan', data: kelasBulanan, borderColor: '#e11d48', tension: 0.3, fill: false }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            let labelsClasses = Object.keys(muridDatabase);
+            let selesaiData = labelsClasses.map(k => muridDatabase[k].selesai);
+            let belumData = labelsClasses.map(k => muridDatabase[k].total - muridDatabase[k].selesai);
+
+            const canvasBar = document.getElementById('chartKewanganKelas');
+            if (canvasBar) {
+                if(cartaKewanganKelasInstance) cartaKewanganKelasInstance.destroy();
+                cartaKewanganKelasInstance = new Chart(canvasBar.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labelsClasses.map(k => k.split(' ')[0] + k.split(' ')[1][0]),
+                        datasets: [
+                            { label: 'Selesai', data: selesaiData, backgroundColor: '#10b981' },
+                            { label: 'Belum', data: belumData, backgroundColor: '#ef4444' }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+        }
+
+        function tutupModalPengesahan() {
+            document.getElementById('modalPengesahan').classList.add('hidden');
+        }
+
+        async function padamItem(idCloud, jenis, localId) {
+            idRekodMahuDipadam = idCloud; 
+            jenisPadam = jenis;
+            
+            document.getElementById('txtSahkanPadamTajuk').innerText = "Padam Rekod?";
+            document.getElementById('txtSahkanPadamKeterangan').innerText = "Tindakan ini tidak boleh diundurkan semula.";
+            
+            const modal = document.getElementById('modalPengesahan');
+            if (modal) modal.classList.remove('hidden');
+            
+            const btnSahkan = document.getElementById('btnSahkanPadam');
+            if (btnSahkan) {
+                btnSahkan.onclick = async function() {
+                    if (jenisPadam === 'kewangan') {
+                        if (isFirebaseActive) {
+                            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'transaksi', idRekodMahuDipadam));
+                        } else {
+                            database = database.filter(i => i.id !== localId);
+                            localStorage.setItem('st_annes_pibg_db_v2', JSON.stringify(database));
+                            prosesKewanganAutomatik();
+                        }
+                    } else {
+                        if (isFirebaseActive) {
+                            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'permohonan', idRekodMahuDipadam));
+                        } else {
+                            permohonanDatabase = permohonanDatabase.filter(i => i.id !== localId);
+                            localStorage.setItem('st_annes_pibg_permohonan_db', JSON.stringify(permohonanDatabase));
+                            prosesPermohonanAutomatik();
+                        }
+                    }
+                    tutupModalPengesahan();
+                    tunjukToast("REKOD DIPADAM");
+                };
+            }
+        }
+
+        // --- BUTANG KAWALAN RESET EMERGENSI DARI ADMIN ---
+        function bukaModalPengesahanReset() {
+            document.getElementById('txtSahkanPadamTajuk').innerText = "PENGESAHAN FORMAT SEMULA";
+            document.getElementById('txtSahkanPadamKeterangan').innerText = "Adakah anda pasti mahu memadam semua data awan sekarang dan menggantikannya dengan 10 Rekod Buku Tunai asal anda?";
+            
+            const modal = document.getElementById('modalPengesahan');
+            if (modal) modal.classList.remove('hidden');
+            
+            const btnSahkan = document.getElementById('btnSahkanPadam');
+            if (btnSahkan) {
+                btnSahkan.onclick = async function() {
+                    tutupModalPengesahan();
+                    tunjukToast("SEDANG MEMADAM DATA AWAN...", "info");
+                    
+                    try {
+                        if (isFirebaseActive) {
+                            // 1. Padam Koleksi Transaksi
+                            const snapTransaksi = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'transaksi'));
+                            for (const d of snapTransaksi.docs) {
+                                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'transaksi', d.id));
+                            }
+                            
+                            // 2. Padam Koleksi Permohonan
+                            const snapPermohonan = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'permohonan'));
+                            for (const d of snapPermohonan.docs) {
+                                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'permohonan', d.id));
+                            }
+                            
+                            // 3. Padam Koleksi Anggaran
+                            const snapAnggaran = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'anggaran'));
+                            for (const d of snapAnggaran.docs) {
+                                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'anggaran', d.id));
+                            }
+                            
+                            // 4. Set Semula Rekod Murid
+                            const docRefMurid = doc(db, 'artifacts', appId, 'public', 'data', 'murid_kelas', 'data_murid');
+                            await setDoc(docRefMurid, defaultMuridDatabase);
+                            
+                            // 5. Muat naik Semula Data Asal Terus ke Awan
+                            for (const item of defaultDatabase) {
+                                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'transaksi'), item);
+                            }
+                            for (const item of defaultPermohonanDatabase) {
+                                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'permohonan'), item);
+                            }
+                            for (const item of defaultAnggaranDatabase) {
+                                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'anggaran'), item);
+                            }
+                            
+                            tunjukToast("DATA AWAN BERJAYA DIPULIHKAN!");
+                        } else {
+                            // Reset Tempatan (Offline Mode)
+                            localStorage.setItem('st_annes_pibg_db_v2', JSON.stringify(defaultDatabase));
+                            localStorage.setItem('st_annes_pibg_permohonan_db', JSON.stringify(defaultPermohonanDatabase));
+                            localStorage.setItem('st_annes_pibg_murid_db', JSON.stringify(defaultMuridDatabase));
+                            localStorage.setItem('st_annes_pibg_anggaran_v2', JSON.stringify(defaultAnggaranDatabase));
+                            functionFallbackLocal();
+                            tunjukToast("DATA LOKAL BERJAYA DIPULIHKAN!");
+                        }
+                    } catch (err) {
+                        console.error("Format ralat:", err);
+                        tunjukToast("Format gagal. Sila cuba lagi.", "ralat");
+                    }
+                };
+            }
+        }
+
+        function eksportCSV() {
+            if(!database.length) { tunjukToast("TIADA DATA!"); return; }
+            let r = [["Tarikh", "Dana", "Jenis Transaksi", "Kelas", "Kategori", "Perincian", "Amaun (RM)"]];
+            database.forEach(i => r.push([i.tarikh, i.dana, i.jenis, i.kelas || 'Umum', i.kategori, `"${i.perincian}"`, i.amaun]));
+            let csv = "data:text/csv;charset=utf-8," + r.map(e => e.join(",")).join("\n");
+            let link = document.createElement("a"); link.setAttribute("href", encodeURI(csv)); link.setAttribute("download", "Laporan_Kewangan_ST_ANNES.csv"); link.click();
+        }
+
+        function eksportPermohonanCSV() {
+            if(!permohonanDatabase.length) { tunjukToast("TIADA DATA!"); return; }
+            let r = [["Tarikh", "Unit", "Pemohon", "Aktiviti/Projek", "Amaun (RM)", "Status"]];
+            permohonanDatabase.forEach(i => r.push([i.tarikh, i.unit, `"${i.pemohon}"`, `"${i.projek}"`, i.amaun, i.status]));
+            let csv = "data:text/csv;charset=utf-8," + r.map(e => e.join(",")).join("\n");
+            let link = document.createElement("a"); link.setAttribute("href", encodeURI(csv)); link.setAttribute("download", "Laporan_Permohonan_ST_ANNES.csv"); link.click();
+        }
+
+        // Pendedahan Fungsi Global ke Object Window
+        window.bukaModalLaluan = bukaModalLaluan;
+        window.tutupModalLaluan = tutupModalLaluan;
+        window.sahkanKataLaluan = sahkanKataLaluan;
+        window.simpanDuitMasuk = simpanDuitMasuk;
+        window.simpanDuitKeluar = simpanDuitKeluar;
+        window.simpanPermohonan = simpanPermohonan;
+        window.simpanBilanganMurid = simpanBilanganMurid;
+        window.simpanAnggaranBelanjawan = simpanAnggaranBelanjawan;
+        window.padamAnggaran = padamAnggaran;
+        window.padamItem = padamItem;
+        window.tutupModalPengesahan = tutupModalPengesahan;
+        window.bukaModalPengesahanReset = bukaModalPengesahanReset;
+        window.eksportCSV = eksportCSV;
+        window.eksportPermohonanCSV = eksportPermohonanCSV;
+        window.paparJadual = paparJadual;
+        window.paparJadualPermohonan = paparJadualPermohonan;
+        window.tukarStatus = tukarStatus;
+
+        // Sandaran Pelan Laluan Lokal
+        if (!firebaseConfig) {
+            functionFallbackLocal();
+        }
+
+        // --- PEMULAAN SELAMAT BAGI PREVIEW IFRAME ---
+        function mulakanSistemPenuh() {
+            if (!isFirebaseActive) {
+                prosesKewanganAutomatik();
+                prosesPermohonanAutomatik();
+                paparAnalisisKutipanKelas();
+            }
+        }
+
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            mulakanSistemPenuh();
+        } else {
+            window.addEventListener("load", mulakanSistemPenuh);
+        }
+
+    </script>
+</body>
+</html>
